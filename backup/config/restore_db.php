@@ -24,6 +24,9 @@ if(!$_POST['dbname']||!$_POST['username']||!$_POST['db_password']||!$_POST['host
 
 
 unlink('../class/Database.php');
+if(is_file("../core/site.php")){
+    unlink("../core/site.php");
+}
 
   $db_name=filter_input(INPUT_POST,"dbname");
   $username=filter_input(INPUT_POST,"username");
