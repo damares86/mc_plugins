@@ -196,7 +196,7 @@ if(filter_input(INPUT_GET,"idToMod")){
         </div>
             <br>
             <h4><?=$regpost_summary?></h4>
-            <textarea id="summernote" name="editor" rows="10">
+            <textarea id="summernote1" name="editor" rows="10">
                 <?=$post->summary?>        
             </textarea>
             
