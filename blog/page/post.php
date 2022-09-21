@@ -33,13 +33,9 @@ $url = get_page_url();
 
         $post->id=$post_id;
         $post->showById();
-        $category_id = $post->category_id;
-        $categories->id = $post->category_id;
 
-        $categories->showById();
-                        
-        $category_name= $categories->category_name;
-
+        $catArr=explode(",",$post->category_id);
+        
         $time = $post->modified;
         $newTime = date("d/m/Y",strtotime($time));
    
@@ -49,14 +45,14 @@ $url = get_page_url();
                     ?>
                 <div class="text-right">
                     
-                    <a href="admin/index.php?man=post&op=edit&idToMod=<?=$post_id?>" class="btn btn-primary btn-sm"><b><?=$blog_edit?></b></a>
+                    <a href="admin/index.php?man=blog&op=edit&idToMod=<?=$post_id?>" class="btn btn-primary btn-sm"><b><?=$blog_edit?></b></a>
                 </div>
                     <?php
                 }
                 ?>
         <a href="blog.php"><- <?=$blog_back?></a>
         <br><br>
-        <h1><?=$title?></h1>
+        <h1><?=$post->title?></h1>
         <p class="metainfo">*** <?=$blog_category?>: 
         <?php
             foreach($catArr as $arr){
@@ -64,7 +60,7 @@ $url = get_page_url();
                 $categories->id = $arr['id'];
                 $categories->showById();
                                 
-                $category_name= $categories->category_name;
+                $category_name = $categories->category_name;
 
         ?>
         | <b><a href="blog.php?cat=<?=$arr['id']?>"><?=$category_name?></a></b> 

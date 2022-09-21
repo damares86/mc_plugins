@@ -18,12 +18,14 @@ if (!isset($_SESSION['loggedin'])) {
 	// loading class
 	include("../class/Database.php");
 	include("../class/Post.php");
+	include("../class/Categories.php");
 
 
 	$database = new Database();
 	$db = $database->getConnection();
 
 	$post = new Post($db);
+	$categories = new Categories($db);
 
 if(filter_input(INPUT_GET,"idToDel")){
 	
@@ -33,14 +35,14 @@ if(filter_input(INPUT_GET,"idToDel")){
 	
 	// delete the role
 	if($post->delete()){
-		header("Location: ../index.php?man=post&op=show&msg=postDelSucc");
+		header("Location: ../index.php?man=blog&op=show&msg=postDelSucc");
 		exit;
 	
 		// empty posted values
 		// $_POST=array();
 	
 	}else{
-		header("Location: ../index.php?man=post&op=show&msg=postDelErr");
+		header("Location: ../index.php?man=blog&op=show&msg=postDelErr");
 		exit;
 	}
 }
@@ -52,7 +54,7 @@ if(filter_input(INPUT_POST,"subReg")){
 	$post->initCheckSessVar();
 	
 	if($_SESSION['error']!=0){
-		header("Location: ../index.php?man=post&op=add&msg=pageDataMissing&more=yes");
+		header("Location: ../index.php?man=blog&op=add&msg=pageDataMissing&more=yes");
 		exit;
 	}
 
@@ -61,7 +63,7 @@ if(filter_input(INPUT_POST,"subReg")){
 
 	if($operation=="add"){
 		// if (!isset($_FILES['myfile'])){
-		// 	header("Location: ../index.php?man=post&op=show&msg=imgEmpty");
+		// 	header("Location: ../index.php?man=blog&op=show&msg=imgEmpty");
 		// 	exit;
 		// }
 		$new_title=$_POST['title'];
@@ -73,7 +75,7 @@ if(filter_input(INPUT_POST,"subReg")){
 			extract($row);			
 			
 			if($new_title==$title){
-				header("Location: ../index.php?man=post&op=show&msg=titleExist");
+				header("Location: ../index.php?man=blog&op=show&msg=titleExist");
 				exit;
 			}
 		}
@@ -95,11 +97,11 @@ if(filter_input(INPUT_POST,"subReg")){
 
 		$cat_names=$_POST['select_cat'];
 		
-		$categories=array();
+		$cat=array();
 		foreach($cat_names as $names){
-			$cat->category_name=$names;
-			$cat->showByName();
-			$categories[]=$cat->id;
+			$categories->category_name=$names;
+			$categories->showByName();
+			$cat[]=$categories->id;
 		}
 
 		// create the post
@@ -108,10 +110,10 @@ if(filter_input(INPUT_POST,"subReg")){
 				$category_id=$row['id'];
 				$post->addCategories($category_id);
 			}			
-			header("Location: ../index.php?man=post&op=show&msg=postSucc");
+			header("Location: ../index.php?man=blog&op=show&msg=postSucc");
 			exit;
 		}else{
-			header("Location: ../index.php?man=post&op=show&msg=postErr");
+			header("Location: ../index.php?man=blog&op=show&msg=postErr");
 			exit;
 		}
 	} else if($operation=="mod"){
@@ -165,14 +167,14 @@ if(filter_input(INPUT_POST,"subReg")){
 				$post->editCategories($category_id);
 
 			}
-			header("Location: ../index.php?man=post&op=show&msg=postEditSucc");
+			header("Location: ../index.php?man=blog&op=show&msg=postEditSucc");
 			exit;
 		
 			// empty posted values
 			// $_POST=array();
 		
 		}else{
-			header("Location: ../index.php?man=post&op=show&msg=postEditErr");
+			header("Location: ../index.php?man=blog&op=show&msg=postEditErr");
 			exit;
 		}
 	}

@@ -21,7 +21,7 @@
             <h6 class="m-0 font-weight-bold text-primary"><?=$post_box_title?></h6>
         </div>
         <div class="card-body">
-            <a href="index.php?man=post&op=add" class="btn btn-success btn-icon-split">
+            <a href="index.php?man=blog&op=add&count=2" class="btn btn-success btn-icon-split">
                 <span class="icon text-white-50">
                     <i class="fas fa-plus"></i>
                 </span>
@@ -78,7 +78,7 @@
                 </td>
                 <td><?=$modified?></td>
                 <td>
-                <a href="index.php?man=post&op=edit&idToMod=<?=$row["id"]?>" class="btn btn-warning btn-icon-split">
+                <a href="index.php?man=blog&op=edit&idToMod=<?=$row["id"]?>" class="btn btn-warning btn-icon-split">
                     <span class="icon text-white-50">
                         <i class="fas fa-pen"></i>
                     </span>

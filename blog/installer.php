@@ -63,8 +63,8 @@ if($op=="del"){
         }
 
         // DELETE MNG
-        if(is_file("../../core/mngPost.php")){
-            if(!unlink("../../core/mngPost.php")){
+        if(is_file("../../core/mngBlog.php")){
+            if(!unlink("../../core/mngBlog.php")){
                 $error++;
             }
         }
@@ -77,16 +77,16 @@ if($op=="del"){
         }
 
         // DELETE ALL
-        if(is_file("../../inc/func/allPost.php")){
-            if(!unlink("../../inc/func/allPost.php")){
+        if(is_file("../../inc/func/allBlog.php")){
+            if(!unlink("../../inc/func/allBlog.php")){
                 $error++;
             }
         }
 
 
         // DELETE REG
-        if(is_file("../../inc/func/regPost.php")){
-            if(!unlink("../../inc/func/regPost.php")){
+        if(is_file("../../inc/func/regBlog.php")){
+            if(!unlink("../../inc/func/regBlog.php")){
                 $error++;
             }
         }
@@ -163,7 +163,7 @@ if($op=="del"){
         // DROP TABLES
         $db->query("DROP TABLE `post`, `categories`");
 
-        $home->name_function="post";
+        $home->name_function="blog";
         $home->delete();
         
         $home->name_function="cat";
@@ -223,23 +223,23 @@ if($op=="del"){
             }
 
             // ALL
-            if(copy('all/allPost.php', '../../inc/func/allPost.php')){
-                chmod('../../inc/func/allPost.php',0777);
+            if(copy('all/allBlog.php', '../../inc/func/allBlog.php')){
+                chmod('../../inc/func/allBlog.php',0777);
             }else{
                 $error++;
             }
 
             
             // ALL
-            if(copy('reg/regPost.php', '../../inc/func/regPost.php')){
-                chmod('../../inc/func/regPost.php',0777);
+            if(copy('reg/regBlog.php', '../../inc/func/regBlog.php')){
+                chmod('../../inc/func/regBlog.php',0777);
             }else{
                 $error++;
             }
 
             // MNG
-            if(copy('mng/mngPost.php', '../../core/mngPost.php')){
-                chmod('../../core/mngPost.php',0777);
+            if(copy('mng/mngBlog.php', '../../core/mngBlog.php')){
+                chmod('../../core/mngBlog.php',0777);
             }else{
                 $error++;
             }
@@ -327,7 +327,7 @@ if($op=="del"){
                 summary text COLLATE utf8_unicode_ci NOT NULL,
                 content text COLLATE utf8_unicode_ci NOT NULL,
                 modified datetime NOT NULL,
-                category_id text (255) NOT NULL)");
+                category_id text (255) NULL)");
 
             $db->query("CREATE TABLE IF NOT EXISTS categories
                             ( id INT ( 5 ) NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -337,20 +337,6 @@ if($op=="del"){
                             (id, category_name)
                             VALUES ('1','Misc')
                             ");
-
-
-     
-
-            // $db->query("INSERT INTO default_page 
-            // (id, page_name, layout, header, img, block1_type, block1, block1_bg, block1_text, block2_type, block2, block2_bg, block2_text, block3_type,block3, block3_bg, block3_text, block4_type,block4, block4_bg, block4_text,  block5_type,block5, block5_bg, block5_text,  block6_type,block6, block6_bg, block6_text) 
-            // VALUES ('5','Blog', 'default', '1', 'visual.jpg', 't',  '','none','#000000', 'n', '', 'none','#000000', 'n',  '', 'none','#000000', 'n', '', 'none','#000000', 'n', '', 'none','#000000', 'n', '', 'none','#000000')
-            // ");
-
-            // $db->query("INSERT INTO default_page 
-            // (id, page_name, layout, header, img, block1_type, block1, block1_bg, block1_text, block2_type, block2, block2_bg, block2_text, block3_type,block3, block3_bg, block3_text, block4_type,block4, block4_bg, block4_text,  block5_type,block5, block5_bg, block5_text,  block6_type,block6, block6_bg, block6_text) 
-            // VALUES ('6','Post', 'default', '1', 'visual.jpg', 't',  '','none','#000000', 'n', '', 'none','#000000', 'n',  '', 'none','#000000', 'n', '', 'none','#000000', 'n', '', 'none','#000000', 'n', '', 'none','#000000')
-            // ");
-
 
 
             // LOCAL

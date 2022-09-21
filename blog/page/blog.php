@@ -16,17 +16,18 @@ require "admin/template/inc/header.php";
     
         $post = new Post($db);
         $categories = new Categories($db);
+
+        $total_rows="";
+
         if(filter_input(INPUT_GET,"cat")){
             $cat_id=filter_input(INPUT_GET,"cat");
             $stmt = $post->showByCatId($cat_id,$from_record_num, $records_per_page);
-        }else{
-           
-        $stmt = $post->showAll($from_record_num, $records_per_page);
-    }
-        
-        $total_rows=$post->countAll();
-
-		
+            $total_rows=$post->countSelected($cat_id);
+        }else{           
+            $stmt = $post->showAll($from_record_num, $records_per_page);
+            $total_rows=$post->countAll();
+        }
+        		
         if(!empty($stmt)){
             foreach($stmt as $row){
                 $categories->id = $row['category_id'];	
@@ -42,7 +43,7 @@ require "admin/template/inc/header.php";
 
 						
 
-        <h1><?=$title?></h1>
+        <h1><?=$row['title']?></h1>
         <p class="metainfo">*** <?=$blog_category?>: 
         <?php
             foreach($catArr as $arr){
@@ -64,12 +65,11 @@ require "admin/template/inc/header.php";
         <div class="blog_content">
         <div class="row">
                 <div class="col px-5">
-                    <img src="uploads/img/<?=$main_img?>" class="w-50 justify-content-center mx-auto"><br>
+                    <img src="uploads/img/<?=$row['main_img']?>" class="w-50 justify-content-center mx-auto"><br>
                 </div>
             </div>
-            <?=$summary?>
-            <br>
-            <a href="post.php?id=<?=$id?>&title=<?=$post_title?>"><?=$blog_continue?> -></a>
+            <?=$row['summary']?>
+            <a href="post.php?id=<?=$row['id']?>&title=<?=$post_title?>"><?=$blog_continue?> -></a>
         </div>
         <?php
             }

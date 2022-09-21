@@ -57,7 +57,7 @@ if(filter_input(INPUT_GET,"idToMod")){
             <br>
            
             <br>
-        <form id="postForm" class="form-horizontal row-fluid" action="core/mngPost.php" method="post"  enctype="multipart/form-data" onsubmit="return postForm()">
+        <form id="postForm" class="form-horizontal row-fluid" action="core/mngBlog.php" method="post"  enctype="multipart/form-data" onsubmit="return postForm()">
         <input type="hidden" name="operation" value="<?= $operation ?>" />
                 <?php 
         $post->id = $idToMod;
@@ -69,18 +69,26 @@ if(filter_input(INPUT_GET,"idToMod")){
                     <?php 
                 } 
                 $post->showById();
-                $catArr="";
+                $catNames="";
+                $catArr=array();
                 if($operation=="add"){
                     if(!isset($_REQUEST['more'])){
                         $post->destroyCheckSessVar();
                     }
-                    $catArr=$_SESSION['blog_select_cat'];
+                    $catNames=$_SESSION['blog_select_cat'];
                 }else if($operation=="mod"&&!isset($_REQUEST['more'])){
                     $post->destroyCheckSessVar();
                     $post->modCheckSessVar();
                     $category_id= $_SESSION['blog_select_cat'];
-                    $catArr=explode(",",$category_id);
+                    $catNames=explode(",",$category_id);
                 }
+
+                foreach($catNames as $names){
+                    $categories->category_name=$names;
+                    $categories->showByName();
+                    $catArr[]=$categories->id;
+                }
+
                                 
                 ?>
 
@@ -135,20 +143,6 @@ if(filter_input(INPUT_GET,"idToMod")){
            <?php
             $img=$post->main_img;
            ?>
-            <div class="control-group">
-                <label class="control-label" for="file"><?=$regpost_img?></label>
-                <div class="controls">
-                    <input type="file" id="myfile" name="myfile">
-                    <br><br>
-                    <?php
-                    if($operation=="mod"){
-                    ?>
-                    <?=$regpage_actual?> &nbsp;<img src="../uploads/img/<?=$img?>"  style="max-width:200px;">
-                    <?php
-                    }
-                    ?>
-                </div>
-            </div>
             <div class="control-group">
                 <label class="control-label" for="file"><?=$regpost_img?></label>
                 <div class="controls">

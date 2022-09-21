@@ -63,7 +63,7 @@ class Post{
         }else{
             $_SESSION['error']++;
         }
-
+                       
     }
 
     function modCheckSessVar(){
@@ -104,19 +104,19 @@ class Post{
                     title = :title,
                     summary = :summary,
                     content = :content,
+                    category_id = :category_id,
                     modified = NOW()";
-                    // category_id = :category_id,
                     
         // prepare the query
         $stmt = $this->conn->prepare($query);
-       
+
         // bind the values
         $stmt->bindParam(':main_img', $this->main_img);       
         $stmt->bindParam(':gall', $this->gall);   
         $stmt->bindParam(':title', $this->title);       
         $stmt->bindParam(':summary', $this->summary);       
         $stmt->bindParam(':content', $this->content);       
-        // $stmt->bindParam(':category_id', $this->category_id);       
+        $stmt->bindParam(':category_id', $this->category_id);       
 
         // execute the query, also check if query was successful
         if($stmt->execute()){
@@ -194,7 +194,7 @@ class Post{
                 
                 $allowed_file_types=array("jpg", "JPG", "jpeg", "png");
                 if(!in_array($file_type, $allowed_file_types)){
-                    header("Location: ../index.php?man=post&op=show&msg=formatImgErr");
+                    header("Location: ../index.php?man=blog&op=show&msg=formatImgErr");
                     exit;
                     // $file_upload_error_messages.="<div>Only .zip, .doc, .docx,.pdf files are allowed.</div>";
                     //exit;
@@ -564,6 +564,59 @@ class Post{
         
     }
 
+    public function countSelected($cat_id){
+
+        $query = "SELECT *
+        FROM " . $this->table_name . "";
+
+        $stmt = $this->conn->prepare( $query );
+        $stmt->execute();
+
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+
+            $catArr=explode(",",$row['category_id']);
+            
+            if(in_array($cat_id,$catArr)){
+                $this->id=$row['id'];
+               
+                $query3="INSERT INTO
+                temp_post 
+
+                 SET
+                     id = :id,
+                     main_img = :main_img,          
+                     title = :title,
+                     summary = :summary,
+                     content = :content,
+                     modified = :modified,
+                     category_id = :category_id";
+                
+                // prepare the query
+                $stmt3 = $this->conn->prepare($query3); 
+                $stmt3->bindParam('id', $row['id']);
+                $stmt3->bindParam(':main_img', $row['main_img']);   
+                $stmt3->bindParam(':title', $row['title']);       
+                $stmt3->bindParam(':summary', $row['summary']);       
+                $stmt3->bindParam(':content', $row['content']);       
+                $stmt3->bindParam(':modified', $row['modified']);       
+                $stmt3->bindParam(':category_id', $row['category_id']);    
+
+                // $stmt3->execute();                 
+                $stmt3->execute();
+            }
+        }
+
+        $query1 = "SELECT *
+        FROM temp_post";
+
+        $stmt1 = $this->conn->prepare( $query1 );
+      
+        $stmt1->execute();
+    
+        $num = $stmt1->rowCount();
+    
+        return $num;
+    }
 
  // delete the post
  function delete(){
