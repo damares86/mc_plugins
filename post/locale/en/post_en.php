@@ -23,6 +23,7 @@ $regpost_info = "Post creation info";
 $regpost_posttitle = "Title";
 $regpost_posttitle_ph = "Post's Title";
 $regpost_cat = "Category";
+$regpost_no_cat = "No category selected";
 $regpost_img = "Main post image";
 $regpost_add_gall = "Add a gallery to the post";
 $regpost_gall = "Choose an existing gallery";

@@ -23,6 +23,7 @@ $regpost_title_edit = "Modifica post";
 $regpost_info = "Info sulla creazione dei post";
 $regpost_posttitle = "Titolo";
 $regpost_cat = "Categoria";
+$regpost_no_cat = "Nessuna categoria selezionata";
 $regpost_img = "Immagine principale del post";
 $regpost_add_gall = "Aggiungi una galleria al post";
 $regpost_gall = "Scegli una galleria";

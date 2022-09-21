@@ -302,7 +302,7 @@ if($op=="del"){
                 summary text COLLATE utf8_unicode_ci NOT NULL,
                 content text COLLATE utf8_unicode_ci NOT NULL,
                 modified datetime NOT NULL,
-                category_id INT (5) NOT NULL)");
+                category_id text (255) NOT NULL)");
 
             $db->query("CREATE TABLE IF NOT EXISTS categories
                             ( id INT ( 5 ) NOT NULL AUTO_INCREMENT PRIMARY KEY,

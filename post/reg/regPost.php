@@ -69,8 +69,19 @@ if(filter_input(INPUT_GET,"idToMod")){
                     <?php 
                 } 
                 $post->showById();
-                $category_id= $post->category_id;
-                
+                $catArr="";
+                if($operation=="add"){
+                    if(!isset($_REQUEST['more'])){
+                        $post->destroyCheckSessVar();
+                    }
+                    $catArr=$_SESSION['blog_select_cat'];
+                }else if($operation=="mod"&&!isset($_REQUEST['more'])){
+                    $post->destroyCheckSessVar();
+                    $post->modCheckSessVar();
+                    $category_id= $_SESSION['blog_select_cat'];
+                    $catArr=explode(",",$category_id);
+                }
+                                
                 ?>
 
                 <div class="control-group">
@@ -80,35 +91,46 @@ if(filter_input(INPUT_GET,"idToMod")){
                         
                     </div>
                 </div>
+                <br>
         
                 <div class="control-group">
-                    <label for="category_id"><?=$regpost_cat?></label>
-                    <?php
-                        $stmt = $categories->showAllList();
-                        $total_rows = $categories->countAll();
-                    
-                        ?>
-                    <select name="category_id">
-                        <?php
-                    
-                    
-                        
-                    
-                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-                
-                            extract($row);
-                        
-                            $selected = "";
-                            if ($id == $category_id) {
-                                $selected = "selected";
-                            }
-                            echo "<option value='{$id}' $selected>{$category_name}</option>";
+                    <label class="control-label" for="myMultiselect" ><?=$regpost_cat?></label>
+                    <div class="controls">
+                        <div id="myMultiselect" class="multiselect">
+                            <div id="mySelectLabel" class="selectBox" onclick="toggleCheckboxArea()">
+                                <select class="form-select">
+                                <option><?=$regpost_no_cat?></option>
+                                </select>
+                                <div class="overSelect"></div>
+                            </div>
+                            <div id="mySelectOptions">
+                                <?php
+                                
+                                $stmt = $categories->showAllList();
+                                        
+                                $total_rows = $categories->countAll();
+                                
+                                // ciclare gli id delle categorie
 
-                        }
+                                foreach($stmt as $row){
 
-                        ?>
-                    </select>
+                                    $checked="";
+                                    
+                                    if(in_array($row['id'], $catArr)){
+                                        $checked="checked";
+                                    }else{
+                                        $checked="";
+                                    }
+                                    ?>
+                                    <label for="<?=$row['id']?>"><input type="checkbox"  name="select_cat[]" id="<?=$row['id']?>" onchange="checkboxStatusChange()" value="<?=$row['category_name']?>" <?=$checked?> /> <?=$row['category_name']?></label>
+                                    <?php
+                                }
+                                ?>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
            <br>
            <?php
             $img=$post->main_img;
@@ -122,6 +144,26 @@ if(filter_input(INPUT_GET,"idToMod")){
                     if($operation=="mod"){
                     ?>
                     <?=$regpage_actual?> &nbsp;<img src="../uploads/img/<?=$img?>"  style="max-width:200px;">
+                    <?php
+                    }
+                    ?>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="file"><?=$regpost_img?></label>
+                <div class="controls">
+                    <input type="file" id="myfile" name="myfile">
+                    <?php
+                        $picture=$_SESSION['blog_img'];
+                    ?>
+                    <input type="hidden" name="old_img" value="<?= $picture ?>" />
+
+                    <br><br>
+                    <?php
+
+                    if($_SESSION['blog_old_img']){
+                    ?>
+                    <?=$regpage_actual?> &nbsp;<img src="../uploads/img/<?=$picture?>"  style="max-width:200px;">
                     <?php
                     }
                     ?>
@@ -196,14 +238,14 @@ if(filter_input(INPUT_GET,"idToMod")){
         </div>
             <br>
             <h4><?=$regpost_summary?></h4>
-            <textarea id="summernote1" name="editor" rows="10">
+            <textarea id="editor1" name="editor" rows="10">
                 <?=$post->summary?>        
             </textarea>
             
             <br>
 
             <h4><?=$regpost_content?></h4>
-            <textarea id="summernote2" name="editor2" rows="10">
+            <textarea id="editor2" name="editor2" rows="10">
                 <?=$post->content?>        
             </textarea>
             <br>
