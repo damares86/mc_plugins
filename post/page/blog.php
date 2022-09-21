@@ -17,8 +17,8 @@ require "admin/template/inc/header.php";
         $post = new Post($db);
         $categories = new Categories($db);
         if(filter_input(INPUT_GET,"cat")){
-            $post->category_id=filter_input(INPUT_GET,"cat");
-            $stmt = $post->showByCatId($from_record_num, $records_per_page);
+            $cat_id=filter_input(INPUT_GET,"cat");
+            $stmt = $post->showByCatId($cat_id,$from_record_num, $records_per_page);
         }else{
            
         $stmt = $post->showAll($from_record_num, $records_per_page);
@@ -26,25 +26,40 @@ require "admin/template/inc/header.php";
         
         $total_rows=$post->countAll();
 
-        if($total_rows>0){
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-        
-                extract($row);
-                $categories->id = $category_id;
+		
+        if(!empty($stmt)){
+            foreach($stmt as $row){
+                $categories->id = $row['category_id'];	
+                $catArr=explode(",",$row['category_id']);
 
+
+                $post_title= preg_replace('/\s+/', '_', $row['title']);
+                $post_title = strtolower($post_title);
+
+                $time = $row['modified'];
+                $newTime = date("d/m/Y",strtotime($time));
+                ?>
+
+						
+
+        <h1><?=$title?></h1>
+        <p class="metainfo">*** <?=$blog_category?>: 
+        <?php
+            foreach($catArr as $arr){
+                if($arr['id']){
+                $categories->id = $arr['id'];
                 $categories->showById();
                                 
                 $category_name= $categories->category_name;
 
-                $post_title= preg_replace('/\s+/', '_', $title);
-                $post_title = strtolower($post_title);
-
-			    $time = $modified;
-				$newTime = date("d/m/Y",strtotime($time));
-
         ?>
-        <h1><?=$title?></h1>
-        <p class="metainfo">*** <?=$blog_category?>: <b><a href="blog.php?cat=<?=$category_id?>"><?=$category_name?></a></b>
+        | <b><a href="blog.php?cat=<?=$arr['id']?>"><?=$category_name?></a></b> 
+    
+        <?php
+                }
+            }
+    
+		?>
          *** <?=$blog_mod?>: <?=$newTime?> ***</p>
         <div class="blog_content">
         <div class="row">
@@ -59,7 +74,7 @@ require "admin/template/inc/header.php";
         <?php
             }
         }
-        require "admin/inc/paging.php";
+        require "admin/template/inc/blog_paging.php";
         ?>
         </div>
         <div id="sidebar">

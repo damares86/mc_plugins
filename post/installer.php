@@ -120,6 +120,19 @@ if($op=="del"){
             }
         }
 
+        if(is_file('../../template/inc/sidebar.php')){
+            if(!unlink('../../template/inc/sidebar.php')){
+                $error++;
+            }
+        }
+
+        if(is_file('../../template/inc/blog_paging.php')){
+            if(!unlink('../../template/inc/blog_paging.php')){
+                $error++;
+            }
+        }
+        
+
         // DELETE DEFAULT PAGE
         if(is_file("../../../post.php")){
             if($plugins->deletePage())
@@ -250,6 +263,18 @@ if($op=="del"){
 
             if(copy('page/blog.php', '../../../blog.php')){
                 chmod('../../../blog.php',0777);
+            }else{
+                $error++;
+            }
+
+            if(copy('page/sidebar.php', '../../template/inc/sidebar.php')){
+                chmod('../../template/inc/sidebar.php',0777);
+            }else{
+                $error++;
+            }
+
+            if(copy('page/blog_paging.php', '../../template/inc/blog_paging.php')){
+                chmod('../../template/inc/blog_paging.php',0777);
             }else{
                 $error++;
             }

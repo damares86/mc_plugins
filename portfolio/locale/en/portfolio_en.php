@@ -57,4 +57,13 @@ $al_catPortfolioErr = "Category not created";
 $al_catPortfolioEditSucc = "Category successfully modified";
 $al_catPortfolioEditErr = "Category not modified";
 
+// PORTFOLIO PROJECT
+
+$pro_edit = "Edit project";
+$pro_client = "Client";
+$pro_comp = "Completed";
+$pro_cat = "Category";
+$pro_goto = "Go to project";
+$pro_back = "Back to portfolio";
+
 ?>

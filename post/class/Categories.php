@@ -136,6 +136,21 @@ class Categories{
         $this->category_name = $row['category_name'];
     }
 
+    function showByName(){
+        $query = "SELECT *
+        FROM " . $this->table_name . "
+        WHERE category_name = :category_name
+        LIMIT 0,1";
+  
+        $stmt = $this->conn->prepare( $query );
+        $stmt->bindParam(':category_name', $this->category_name);
+        $stmt->execute();
+    
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+        $this->id = $row['id'];
+        $this->category_name = $row['category_name'];
+    }
 
     function catExists(){
     

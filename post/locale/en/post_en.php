@@ -53,4 +53,16 @@ $regcat_title_edit = "Edit category";
 $regcat_name = "Category name";
 $regcat_name_ph = "Choose a category name";
 
+
+// BLOG
+
+$blog_category = "Category";
+$blog_mod = "Published";
+$blog_continue = "Continue reading";
+$blog_back = "Back to blog";
+$blog_categories = "Categories";
+$blog_share = "Share on";
+$blog_edit = "Edit post";
+
+
 ?>

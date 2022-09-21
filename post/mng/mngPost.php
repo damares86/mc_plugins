@@ -49,35 +49,28 @@ if(filter_input(INPUT_POST,"subReg")){
 
 	$operation=filter_input(INPUT_POST,"operation");
 
+	$post->initCheckSessVar();
+	
+	if($_SESSION['error']!=0){
+		header("Location: ../index.php?man=post&op=add&msg=pageDataMissing&more=yes");
+		exit;
+	}
+
 	$editor = preg_replace('/\s+/', '', $_POST['editor']);
 	$editor2 = preg_replace('/\s+/', '', $_POST['editor2']);
 
-	if(!$_POST['title']||empty($editor)||empty($editor2)){
-		header("Location: ../index.php?man=post&op=show&msg=postTitleEmpty");
-		exit;
-	}
-
-	if(empty($editor)||empty($editor2)){
-		header("Location: ../index.php?man=post&op=show&msg=postEmpty");
-		exit;
-	}
-
-
-
-
 	if($operation=="add"){
-		if (!isset($_FILES['myfile'])){
-			header("Location: ../index.php?man=post&op=show&msg=imgEmpty");
-			exit;
-		}
+		// if (!isset($_FILES['myfile'])){
+		// 	header("Location: ../index.php?man=post&op=show&msg=imgEmpty");
+		// 	exit;
+		// }
 		$new_title=$_POST['title'];
 		
 		$stmt=$post->showAllList();
 		
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
 			
-			extract($row);
-			
+			extract($row);			
 			
 			if($new_title==$title){
 				header("Location: ../index.php?man=post&op=show&msg=titleExist");
@@ -98,12 +91,25 @@ if(filter_input(INPUT_POST,"subReg")){
 		$post->main_img=$_FILES['myfile']['name'];
 		$post->summary=$_POST['editor'];
 		$post->content=$_POST['editor2'];
-		$post->category_id=$_POST['category_id'];
+		// $post->category_id=$_POST['category_id'];
+
+		$cat_names=$_POST['select_cat'];
 		
+		$categories=array();
+		foreach($cat_names as $names){
+			$cat->category_name=$names;
+			$cat->showByName();
+			$categories[]=$cat->id;
+		}
+
 		// create the post
-		if($post->insert()){			
-				header("Location: ../index.php?man=post&op=show&msg=postSucc");
-				exit;
+		if($post->insert()){
+			foreach($categories as $row){
+				$category_id=$row['id'];
+				$post->addCategories($category_id);
+			}			
+			header("Location: ../index.php?man=post&op=show&msg=postSucc");
+			exit;
 		}else{
 			header("Location: ../index.php?man=post&op=show&msg=postErr");
 			exit;
@@ -141,31 +147,35 @@ if(filter_input(INPUT_POST,"subReg")){
 		// modifica post
 		$post->summary=$_POST['editor'];
 		$post->content=$_POST['editor2'];
-		$post->category_id=$_POST['category_id'];
 		$post->id=$_POST['idToMod'];
+				
+		$cat_names=$_POST['select_cat'];
+		$categories=array();
+		foreach($cat_names as $names){
+			$cat->category_name=$names;
+			$cat->showByName();
+			$categories[]=$cat->id;
+		}
 		
-		
-			// update the post
-			if($post->update()){
-				header("Location: ../index.php?man=post&op=show&msg=postEditSucc");
-				exit;
-			
-				// empty posted values
-				// $_POST=array();
-			
-			}else{
-				header("Location: ../index.php?man=post&op=show&msg=postEditErr");
-				exit;
+		// update the post
+		if($post->update()){
+			for ($i = 0, $n = count($categories) ; $i < $n ; $i++){			
+				$category_id=$categories[$i];
+				$post->counter=$i;
+				$post->editCategories($category_id);
+
 			}
-
+			header("Location: ../index.php?man=post&op=show&msg=postEditSucc");
+			exit;
+		
+			// empty posted values
+			// $_POST=array();
+		
+		}else{
+			header("Location: ../index.php?man=post&op=show&msg=postEditErr");
+			exit;
+		}
 	}
-	
-
-
-	// MODIFICA UTENTE
-
-
-
 } else {
 	echo "errore post";
 	exit;

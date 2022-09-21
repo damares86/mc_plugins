@@ -54,11 +54,27 @@ $url = get_page_url();
                     <?php
                 }
                 ?>
-        <a href="blog.php"><- Back to blog</a>
+        <a href="blog.php"><- <?=$blog_back?></a>
         <br><br>
-        <h1><?=$post->title?></h1>
-        <p class="metainfo"><?=$blog_category?>: <b><a href="blog.php?cat=<?=$category_id?>"><?=$category_name?></a></b></p>
-        <p class="metainfo"><?=$blog_mod?>: <?=$newTime?></p>
+        <h1><?=$title?></h1>
+        <p class="metainfo">*** <?=$blog_category?>: 
+        <?php
+            foreach($catArr as $arr){
+                if($arr['id']){
+                $categories->id = $arr['id'];
+                $categories->showById();
+                                
+                $category_name= $categories->category_name;
+
+        ?>
+        | <b><a href="blog.php?cat=<?=$arr['id']?>"><?=$category_name?></a></b> 
+    
+        <?php
+                }
+            }
+    
+		?>
+         *** <?=$blog_mod?>: <?=$newTime?> ***</p>
         <div class="blog_content">
             <div class="row">
                 <div class="col px-5 mb-5">

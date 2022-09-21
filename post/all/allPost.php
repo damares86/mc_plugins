@@ -64,7 +64,18 @@
             <tr>
                 <td><?=$title?></td>
                 <td><a href="../post.php?id=<?=$id?>&title=<?=$post_title?>"><?=$post_view?></a></td>
-                <td><?=$category_name?></td>
+                <td>
+                    <?php
+                        $catArr=explode(",",$category_id);
+                        
+                        foreach($catArr as $row1){
+                            $categories->id = $row1['id'];
+                            $categories->showById();                                        
+                            $category_name= $categories->category_name;
+                            echo "$category_name - ";
+                        }
+                    ?>    
+                </td>
                 <td><?=$modified?></td>
                 <td>
                 <a href="index.php?man=post&op=edit&idToMod=<?=$row["id"]?>" class="btn btn-warning btn-icon-split">

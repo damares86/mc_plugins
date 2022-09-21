@@ -8,19 +8,90 @@ class Post{
 
     public $id;
     public $main_img;
-    public $gall;
-    public $gall_q;
     public $new_img;
+    public $img_tmp;
     public $title;
     public $summary;
     public $content;
     public $modified;
     public $category_id;
+    public $categories;
+    public $counter;
+
 
     // constructor
     public function __construct($db){
         $this->conn = $db;
     }
+
+    function initCheckSessVar(){
+
+        $_SESSION['error']=0;
+
+        if(!empty($_POST['title'])){
+            $_SESSION['blog_title']=$_POST['title'];
+        }else{
+            $_SESSION['error']++;
+        }
+
+        if(!empty($_POST['select_cat'])){
+            $_SESSION['blog_select_cat']=$_POST['select_cat'];
+        }else{
+            $_SESSION['error']++;
+        }
+        
+        if($_FILES['myfile']['size']!=0){
+            $this->main_img=$_FILES['myfile']['name'];
+            $this->img_tmp=$_FILES['myfile']['tmp_name'];
+            $this->uploadPhoto();
+            $_SESSION['blog_img']=$_FILES['myfile']['name'];
+            $_SESSION['blog_old_img']=$_SESSION['blog_img'];
+        }else if($_SESSION['blog_old_img']){
+            $_SESSION['blog_img']=$_SESSION['blog_old_img'];
+        }else{
+            $_SESSION['error']++;
+        }
+    
+        if(!empty($_POST['editor'])){
+            $_SESSION['blog_editor']=$_POST['editor'];
+        }else{
+            $_SESSION['error']++;
+        }
+
+        if(!empty($_POST['editor2'])){
+            $_SESSION['blog_editor2']=$_POST['editor2'];
+        }else{
+            $_SESSION['error']++;
+        }
+
+    }
+
+    function modCheckSessVar(){
+
+        $_SESSION['error']=0;
+
+        $_SESSION['blog_title']=$this->title;
+        $_SESSION['blog_select_cat']=$this->category_id;
+        $_SESSION['blog_img']=$this->main_img;
+        $_SESSION['blog_old_img']=$this->main_img;
+        $_SESSION['blog_editor']=$this->summary;
+        $_SESSION['blog_editor2']=$this->content;
+
+    }
+
+    function destroyCheckSessVar(){
+
+        $_SESSION['error']=0;
+
+        unset($_SESSION['blog_title']);
+        unset($_SESSION['blog_select_cat']);
+        unset($_SESSION['blog_img']);
+        unset($_SESSION['blog_old_img']);
+        unset($_SESSION['blog_editor']);
+        unset($_SESSION['blog_editor2']);
+        
+    }
+
 
     // create new role record
     function insert(){
@@ -33,9 +104,9 @@ class Post{
                     title = :title,
                     summary = :summary,
                     content = :content,
-                    category_id = :category_id,
                     modified = NOW()";
-    
+                    // category_id = :category_id,
+                    
         // prepare the query
         $stmt = $this->conn->prepare($query);
        
@@ -45,19 +116,10 @@ class Post{
         $stmt->bindParam(':title', $this->title);       
         $stmt->bindParam(':summary', $this->summary);       
         $stmt->bindParam(':content', $this->content);       
-        $stmt->bindParam(':category_id', $this->category_id);       
+        // $stmt->bindParam(':category_id', $this->category_id);       
 
-
-
-      
         // execute the query, also check if query was successful
         if($stmt->execute()){
-            if($this->uploadPhoto()){
-                return true;
-            }else{
-                return false;
-            }
-           
             return true;
 
         }else{
@@ -83,7 +145,6 @@ class Post{
                 title = :title,
                 summary = :summary,
                 content = :content,
-                category_id = :category_id,
                 modified = NOW()
                 WHERE
                 id = :id";
@@ -96,7 +157,7 @@ class Post{
                 $stmt->bindParam(':title', $this->title);   
                 $stmt->bindParam(':summary', $this->summary);
                 $stmt->bindParam(':content', $this->content); 
-                $stmt->bindParam(':category_id', $this->category_id);       
+                // $stmt->bindParam(':category_id', $this->category_id);       
                 $stmt->bindParam(':id', $this->id);
                     
       
@@ -197,6 +258,138 @@ class Post{
                 }   
         	}
 
+    function addCategories($cat){
+
+
+        // prendo i permessi esistenti
+        $query1= "SELECT
+                *
+            FROM
+                ".$this->table_name."
+                WHERE title = :title";
+
+        $stmt1 = $this->conn->prepare($query1);
+        $stmt1->bindParam('title', $this->title);
+
+        $stmt1->execute();
+
+        $row1 = $stmt1->fetch(PDO::FETCH_ASSOC);
+
+        // converto in array
+        if($row1['category_id']){
+            $categories=$row1['category_id'];
+            $catArr=explode(",",$categories);
+        }else{
+            $catArr=array();
+        }
+        
+        // aggiungo il file caricato come elemento dell'array e poi lo riconverto in stringa
+        $catArr[]=$cat;
+        $stringCat=implode(",",$catArr);
+
+        $this->categories=$stringCat;
+
+        // azzero il campo "files"
+        $query2= "UPDATE
+            ".$this->table_name."
+            SET
+            category_id = NULL
+            WHERE title = :title";
+
+        $stmt2 = $this->conn->prepare($query2);
+        $stmt2->bindParam('title', $this->title);
+
+        
+        $stmt2->execute();
+
+        // inserisco la nuova stringa dei permessi nel db
+
+        $query= "UPDATE
+        ".$this->table_name."
+        SET
+        category_id = :category
+        WHERE title = :title";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam('category', $this->categories);
+        $stmt->bindParam('title', $this->title);
+
+        if($stmt->execute()){
+            return true;
+
+        }else{
+            $this->showError($stmt);
+            return false;
+        }
+    }
+
+    function editCategories($cat){
+
+        if($this->counter>0){
+        // prendo i permessi esistenti
+        $query1= "SELECT
+                *
+            FROM
+                ".$this->table_name."
+                WHERE title = :title";
+
+        $stmt1 = $this->conn->prepare($query1);
+        $stmt1->bindParam('title', $this->title);
+
+        $stmt1->execute();
+
+        $row1 = $stmt1->fetch(PDO::FETCH_ASSOC);
+
+        }
+        // converto in array
+        if($row1['category_id']){
+            $categories=$row1['category_id'];
+            $catArr=explode(",",$categories);
+        }else{
+            $catArr=array();
+        }
+        
+        // aggiungo il file caricato come elemento dell'array e poi lo riconverto in stringa
+        $catArr[]=$cat;
+        $stringCat=implode(",",$catArr);
+
+        $this->categories=$stringCat;
+        
+        // azzero il campo "files"
+        $query2= "UPDATE
+            ".$this->table_name."
+            SET
+            category_id = NULL
+            WHERE title = :title";
+
+        $stmt2 = $this->conn->prepare($query2);
+        $stmt2->bindParam('title', $this->title);
+
+        
+        $stmt2->execute();
+
+        // inserisco la nuova stringa dei permessi nel db
+
+        $query= "UPDATE
+        ".$this->table_name."
+        SET
+        category_id = :category
+        WHERE title = :title";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam('category', $this->categories);
+        $stmt->bindParam('title', $this->title);
+
+        if($stmt->execute()){
+            return true;
+
+        }else{
+            $this->showError($stmt);
+            return false;
+        }
+    }
+        
+        
 
 
     function showAll($from_record_num, $records_per_page){
@@ -294,21 +487,83 @@ class Post{
         $this->modified = $row['modified'];
     }
 
-    function showByCatId(){
-        $query = "SELECT *
-        FROM " . $this->table_name . "
-        WHERE category_id = ?
-        ORDER BY modified DESC";
-        $stmt = $this->conn->prepare( $query );
-        $stmt->bindParam(1, $this->category_id);
-        $stmt->execute();
+    function showByCatId($cat_id,$from_record_num, $records_per_page){
 
+        // drop if exist
+        $query2="DROP TEMPORARY TABLE temp_post";
+
+        $stmt2 = $this->conn->prepare( $query2 );
+        $stmt2->execute();
+
+
+        $query = "SELECT *
+        FROM " . $this->table_name . "";
+
+        $stmt = $this->conn->prepare( $query );
+        $stmt->execute();
         
-        return $stmt;
-   
-    
+        // create temporary table
+
+        $query2="CREATE TEMPORARY TABLE temp_post(
+                id int(5) NOT NULL PRIMARY KEY,
+                main_img VARCHAR(255) NOT NULL,
+                title VARCHAR(255) NOT NULL,
+                summary text COLLATE utf8_unicode_ci NOT NULL,
+                content text COLLATE utf8_unicode_ci NOT NULL,
+                modified datetime NOT NULL,
+                category_id text (255) NOT NULL)";
+
+        $stmt2 = $this->conn->prepare( $query2 );
+        $stmt2->execute();
+
+        // insert record in temporary table
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+
+            $catArr=explode(",",$row['category_id']);
+            
+            if(in_array($cat_id,$catArr)){
+                $this->id=$row['id'];
+               
+                $query3="INSERT INTO
+                temp_post 
+
+                 SET
+                     id = :id,
+                     main_img = :main_img,          
+                     title = :title,
+                     summary = :summary,
+                     content = :content,
+                     modified = :modified,
+                     category_id = :category_id";
+                
+                // prepare the query
+                $stmt3 = $this->conn->prepare($query3); 
+                $stmt3->bindParam('id', $row['id']);
+                $stmt3->bindParam(':main_img', $row['main_img']);   
+                $stmt3->bindParam(':title', $row['title']);       
+                $stmt3->bindParam(':summary', $row['summary']);       
+                $stmt3->bindParam(':content', $row['content']);       
+                $stmt3->bindParam(':modified', $row['modified']);       
+                $stmt3->bindParam(':category_id', $row['category_id']);    
+
+                // $stmt3->execute();                 
+                $stmt3->execute();
+            }
+        }
+        
+            $query1 = "SELECT *
+            FROM temp_post ORDER BY modified DESC
+                    LIMIT
+                    {$from_record_num}, {$records_per_page}";
+
+            $stmt1 = $this->conn->prepare( $query1 );
+          
+            $stmt1->execute();
+
+          return $stmt1;
         
     }
+
 
  // delete the post
  function delete(){

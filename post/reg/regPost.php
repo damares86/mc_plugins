@@ -87,7 +87,7 @@ if(filter_input(INPUT_GET,"idToMod")){
                 <div class="control-group">
                     <label class="control-label" for="title"><?=$regpost_posttitle?></label>
                     <div class="controls">
-                        <input type="text" id="title" name="title" placeholder="<?=$regpost_posttitle_ph?>" value="<?=$post->title?>" class="span8">
+                        <input type="text" id="title" name="title" placeholder="<?=$regpost_posttitle_ph?>" value="<?= $_SESSION['blog_title']?>" class="span8">
                         
                     </div>
                 </div>
@@ -239,14 +239,14 @@ if(filter_input(INPUT_GET,"idToMod")){
             <br>
             <h4><?=$regpost_summary?></h4>
             <textarea id="editor1" name="editor" rows="10">
-                <?=$post->summary?>        
+                <?=$_SESSION['blog_editor']?>        
             </textarea>
             
             <br>
 
             <h4><?=$regpost_content?></h4>
             <textarea id="editor2" name="editor2" rows="10">
-                <?=$post->content?>        
+                <?=$_SESSION['blog_editor2']?>        
             </textarea>
             <br>
                  <input type="submit" class="btn btn-primary" name="subReg" value="<?=$txt_submit?>">
