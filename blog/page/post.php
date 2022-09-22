@@ -163,15 +163,17 @@ require "admin/template/inc/header.php";
             <div class="border p-3">
                 <?=$blog_share?>: &nbsp;
                 
-            <a href="https://twitter.com/share?url=<?=$url?>" target="_blank" onclick="window.open(this.href,'window','width=640,height=480,resizable,scrollbars') ;return false;">
-            <i class="fab fa-twitter"></i></a>
+                <a href="https://twitter.com/share?url=<?=$url?>" target="_blank" onclick="window.open(this.href,'window','width=640,height=480,resizable,scrollbars') ;return false;">
+                <i class="fab fa-twitter"></i></a>
 
-                        &nbsp; &nbsp; <a href="https://www.facebook.com/sharer.php?u=<?=$url?>" target="_blank" onclick="window.open(this.href,'window','width=640,height=480,resizable,scrollbars') ;return false;">
-                        <i class="fab fa-facebook"></i></a>
-                        <!-- <a href="http://www.linkedin.com/shareArticle?mini=true&url=<?=$url?>">
-                            <i class="fa fa-linkedin" data-toggle="tooltip" title="" data-original-title="Linkedin">linkedin</i>
-                        </a> -->
-            <br>
+                &nbsp; &nbsp; <a href="https://www.facebook.com/sharer.php?u=<?=$url?>" target="_blank" onclick="window.open(this.href,'window','width=640,height=480,resizable,scrollbars') ;return false;">
+                <i class="fab fa-facebook"></i></a>
+
+                &nbsp; &nbsp;
+                <script src="https://platform.linkedin.com/in.js" type="text/javascript">lang: en_US</script>
+                <script type="IN/Share" data-url="<?=$url?>"></script>
+                
+                <br>
             </div>
         </div>
         
