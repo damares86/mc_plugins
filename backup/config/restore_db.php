@@ -24,9 +24,9 @@ if(!$_POST['dbname']||!$_POST['username']||!$_POST['db_password']||!$_POST['host
 
 
 unlink('../class/Database.php');
-if(is_file("../core/site.php")){
-    unlink("../core/site.php");
-}
+// if(is_file("../core/site.php")){
+//     unlink("../core/site.php");
+// }
 
   $db_name=filter_input(INPUT_POST,"dbname");
   $username=filter_input(INPUT_POST,"username");
@@ -89,32 +89,6 @@ try
      echo 'Connection failed: ' . $e->getMessage();
 }
 
-// spl_autoload_register('autoloader');
-
-// function autoloader($class){
-// 	include("../class/$class.php");
-// }
-
-// $database = new Database();
-// $db = $database->getConnection();
-
-// $query = '';
-// $sqlScript = file('../backup.sql');
-// foreach ($sqlScript as $line)	{
-	
-// 	$startWith = substr(trim($line), 0 ,2);
-// 	$endWith = substr(trim($line), -1 ,1);
-	
-// 	if (empty($line) || $startWith == '--' || $startWith == '/*' || $startWith == '//') {
-// 		continue;
-// 	}
-		
-// 	$query = $query . $line;
-// 	if ($endWith == ';') {
-// 		mysqli_query($conn,$query) or die('<div class="error-response sql-import-response">Problem in executing the SQL query <b>' . $query. '</b></div>');
-// 		$query= '';		
-// 	}
-// }
 
 unlink("../../restore.php");
 unlink("../backup.sql");

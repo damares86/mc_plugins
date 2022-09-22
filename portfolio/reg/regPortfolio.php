@@ -148,7 +148,7 @@ $stmt = $settings->showSettings();
 <br>
             <h3><?=$regport_description?></h3>
 
-            <textarea id="summernote" name="editor" rows="10">   <?=$portfolio->description?></textarea>
+            <textarea id="editor1" name="editor" rows="10">   <?=$portfolio->description?></textarea>
             <br>
           
                  <input type="submit" class="btn btn-primary" name="subReg" value="<?=$txt_submit?>">

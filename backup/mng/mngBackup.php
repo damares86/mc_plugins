@@ -137,7 +137,7 @@ function zipData($source, $destination) {
     readfile($zipFile);
     exec('rm ' . $zipFile); 
     exec('rm ../../restore.php'); 
-    exec('rm backup.sql'); 
+    exec('rm ../backup.sql'); 
 
 }else{
     header("Location: ../index.php?man=backup&op=add&msg=backupErr");
