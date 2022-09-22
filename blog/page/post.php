@@ -1,6 +1,5 @@
 <?php
 
-require "admin/template/inc/header.php";
 
 ?>
 <?php
@@ -14,6 +13,8 @@ function get_page_url() {
 
 // esempio di utilizzo
 $url = get_page_url();
+
+require "admin/template/inc/header.php";
 
 ?>
 <div id="bottomContainer" class="pb-1">

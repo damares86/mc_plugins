@@ -65,7 +65,7 @@
                 <td><?=$title?></td>
                 <td><a href="../post.php?id=<?=$id?>&title=<?=$post_title?>"><?=$post_view?></a></td>
                 <td>
-                    <?php
+                    - <?php
                         $catArr=explode(",",$category_id);
                         
                         foreach($catArr as $row1){

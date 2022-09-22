@@ -106,7 +106,7 @@ if(filter_input(INPUT_POST,"subReg")){
 
 		// create the post
 		if($post->insert()){
-			foreach($categories as $row){
+			foreach($cat as $row){
 				$category_id=$row['id'];
 				$post->addCategories($category_id);
 			}			
