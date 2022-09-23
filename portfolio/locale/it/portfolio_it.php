@@ -14,6 +14,12 @@ $port_modal_text = "Se vuoi veramente cancellare questo progetto clicca \"Ok\"."
 $port_cat_title = "Categorie del portfolio";
 $port_noproject = "Nessun progetto presente";
 
+$port_cat_add = "Aggiungi categoria";
+$port_cat_name = "Categoria";
+$port_regcat_name = "Nome categoria";
+$port_regcat_name_ph = "Scegli il nome per la categoria";
+$post_regcat_title_add = "Aggiungi una categoria";
+$post_regcat_title_edit = "Modifica una categoria";
 
 // REG AND EDIT PORTFOLIO
 

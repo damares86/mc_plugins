@@ -1,14 +1,14 @@
 <?php
 
 $operation = "add";
-$titoloForm = $regcat_title_add;
+$titoloForm = $post_regcat_title_add;
 
 $catToMod="";
 $idToMod="";
 
 if(filter_input(INPUT_GET,"idToMod")){
     $idToMod = filter_input(INPUT_GET,"idToMod");
-    $titoloForm=$regcat_title_edit;
+    $titoloForm=$post_regcat_title_edit;
     $operation="mod";
 }
 
@@ -45,9 +45,9 @@ if(filter_input(INPUT_GET,"idToMod")){
 
         ?>
             <div class="control-group">
-                <label class="control-label" for="category_name"><?=$regcat_name?></label>
+                <label class="control-label" for="category_name"><?=$port_regcat_name?></label>
                 <div class="controls">
-                    <input type="text" id="category_name" name="category_name" placeholder="<?=$regcat_name_ph?>" value="<?=$categories_portfolio->category_name?>" class="span8">
+                    <input type="text" id="category_name" name="category_name" placeholder="<?=$port_regcat_name_ph?>" value="<?=$categories_portfolio->category_name?>" class="span8">
                      
                 </div>
             </div>

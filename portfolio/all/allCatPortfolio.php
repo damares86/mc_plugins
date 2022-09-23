@@ -25,7 +25,7 @@
                 <span class="icon text-white-50">
                     <i class="fas fa-plus"></i>
                 </span>
-                <span class="text"><?=$cat_add ?></span>
+                <span class="text"><?=$port_cat_add ?></span>
             </a>
             <br>
             <br>
@@ -40,7 +40,7 @@ if($total_rows>0){
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th scope="col"><?=$cat_name?></th>
+                    <th scope="col"><?=$port_cat_name?></th>
                     <th scope="col"><?=$txt_edit?></th>
                     <th scope="col"><?=$txt_delete?></th>
                 </tr>
