@@ -13,6 +13,7 @@ class Post{
     public $title;
     public $summary;
     public $content;
+    public $author;
     public $modified;
     public $category_id;
     public $categories;
@@ -27,6 +28,7 @@ class Post{
     function initCheckSessVar(){
 
         $_SESSION['error']=0;
+
 
         if(!empty($_POST['title'])){
             $_SESSION['blog_title']=$_POST['title'];
@@ -104,6 +106,7 @@ class Post{
                     title = :title,
                     summary = :summary,
                     content = :content,
+                    author = :author,
                     category_id = :category_id,
                     modified = NOW()";
                     
@@ -116,6 +119,7 @@ class Post{
         $stmt->bindParam(':title', $this->title);       
         $stmt->bindParam(':summary', $this->summary);       
         $stmt->bindParam(':content', $this->content);       
+        $stmt->bindParam(':author', $this->author);       
         $stmt->bindParam(':category_id', $this->category_id);       
 
         // execute the query, also check if query was successful
@@ -483,6 +487,7 @@ class Post{
         $this->title = $row['title'];
         $this->summary = $row['summary'];
         $this->content = $row['content'];
+        $this->author = $row['author'];
         $this->category_id = $row['category_id'];
         $this->modified = $row['modified'];
     }
@@ -510,6 +515,7 @@ class Post{
                 title VARCHAR(255) NOT NULL,
                 summary text COLLATE utf8_unicode_ci NOT NULL,
                 content text COLLATE utf8_unicode_ci NOT NULL,
+                author VARCHAR(255) NOT NULL,
                 modified datetime NOT NULL,
                 category_id text (255) NOT NULL)";
 
@@ -543,6 +549,7 @@ class Post{
                 $stmt3->bindParam(':title', $row['title']);       
                 $stmt3->bindParam(':summary', $row['summary']);       
                 $stmt3->bindParam(':content', $row['content']);       
+                $stmt3->bindParam(':author', $row['author']);       
                 $stmt3->bindParam(':modified', $row['modified']);       
                 $stmt3->bindParam(':category_id', $row['category_id']);    
 
@@ -588,6 +595,7 @@ class Post{
                      title = :title,
                      summary = :summary,
                      content = :content,
+                     author = :author,
                      modified = :modified,
                      category_id = :category_id";
                 
@@ -598,6 +606,7 @@ class Post{
                 $stmt3->bindParam(':title', $row['title']);       
                 $stmt3->bindParam(':summary', $row['summary']);       
                 $stmt3->bindParam(':content', $row['content']);       
+                $stmt3->bindParam(':author', $row['author']);       
                 $stmt3->bindParam(':modified', $row['modified']);       
                 $stmt3->bindParam(':category_id', $row['category_id']);    
 

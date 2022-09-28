@@ -54,7 +54,7 @@ require "admin/template/inc/header.php";
         <a href="blog.php"><- <?=$blog_back?></a>
         <br><br>
         <h1><?=$post->title?></h1>
-        <p class="metainfo">*** <?=$blog_category?>: 
+        <p class="metainfo">*** <?=$post_author?>: <b><?=$post->author?></b> ***  <?=$blog_category?>: 
         <?php
             foreach($catArr as $arr){
                 if($arr['id']){

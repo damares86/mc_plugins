@@ -325,6 +325,7 @@ if($op=="del"){
                 gall VARCHAR(255) NOT NULL,
                 title VARCHAR(255) NOT NULL,
                 summary text COLLATE utf8_unicode_ci NOT NULL,
+                author VARCHAR(255) NOT NULL,
                 content text COLLATE utf8_unicode_ci NOT NULL,
                 modified datetime NOT NULL,
                 category_id text (255) NULL)");

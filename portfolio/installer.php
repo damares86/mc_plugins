@@ -310,7 +310,7 @@ if($op=="del"){
                 description text COLLATE utf8_unicode_ci NOT NULL,
                 client VARCHAR(255) NOT NULL,
                 completed date NOT NULL,
-                category INT NOT NULL,
+                category TEXT(255) NULL,
                 link VARCHAR(255) NOT NULL)
                 ");
 

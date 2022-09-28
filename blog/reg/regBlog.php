@@ -59,9 +59,12 @@ if(filter_input(INPUT_GET,"idToMod")){
             <br>
         <form id="postForm" class="form-horizontal row-fluid" action="core/mngBlog.php" method="post"  enctype="multipart/form-data" onsubmit="return postForm()">
         <input type="hidden" name="operation" value="<?= $operation ?>" />
+        <input type="hidden" name="author" value="<?= $user_name ?>" />
+
                 <?php 
         $post->id = $idToMod;
-      
+
+		     
 
                 if($operation=="mod"){ 
                     ?>
@@ -76,20 +79,19 @@ if(filter_input(INPUT_GET,"idToMod")){
                         $post->destroyCheckSessVar();
                     }
                     $catNames=$_SESSION['blog_select_cat'];
+                    foreach($catNames as $names){
+                        $categories->category_name=$names;
+                        $categories->showByName();
+                        $catArr[]=$categories->id;
+                    }
                 }else if($operation=="mod"&&!isset($_REQUEST['more'])){
                     $post->destroyCheckSessVar();
                     $post->modCheckSessVar();
                     $category_id= $_SESSION['blog_select_cat'];
-                    $catNames=explode(",",$category_id);
+                    $catArr=explode(",",$category_id);
                 }
 
-                foreach($catNames as $names){
-                    $categories->category_name=$names;
-                    $categories->showByName();
-                    $catArr[]=$categories->id;
-                }
-
-                                
+                                                
                 ?>
 
                 <div class="control-group">

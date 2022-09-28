@@ -10,6 +10,7 @@ $post_link ="Post link";
 $post_view = "View";
 $post_cat = "Category";
 $post_mod = "Modified";
+$post_author = "Author";
 $post_modal_text = "If you really want to delete this post click \"Ok\" below.";
 $post_nopost = "No posts found";
 

@@ -10,16 +10,106 @@ class Portfolio{
     public $theme;
     public $project_title;
     public $main_img;
+    public $main_old_img;
+    public $new_img;
     public $description;
     public $client;
     public $completed;
     public $category;
     public $link;
+    public $counter;
 
     // constructor
     public function __construct($db){
         $this->conn = $db;
     }
+
+    function initCheckSessVar(){
+
+        $_SESSION['error']=0;
+
+        if(!empty($_POST['project_title'])){
+            $_SESSION['project_title']=$_POST['project_title'];
+        }else{
+            $_SESSION['error']++;
+        }
+
+        if(!empty($_POST['select_cat'])){
+            $_SESSION['port_cat']=$_POST['select_cat'];
+        }else{
+            $_SESSION['error']++;
+        }
+
+        if($_FILES['myfile']['size']!=0){
+            $this->main_img=$_FILES['myfile']['name'];
+            $this->img_tmp=$_FILES['myfile']['tmp_name'];
+            $this->uploadPhoto();
+            $_SESSION['main_img']=$_FILES['myfile']['name'];
+            $_SESSION['main_old_img']=$_SESSION['main_img'];
+        }else if($_SESSION['main_old_img']){
+            $_SESSION['main_img']=$_SESSION['main_old_img'];
+        }else{
+            $_SESSION['error']++;
+        }
+
+        if(!empty($_POST['client'])){
+            $_SESSION['port_client']=$_POST['client'];
+        }else{
+            $_SESSION['error']++;
+        }
+
+        if(!empty($_POST['completed'])){
+            $_SESSION['port_completed']=$_POST['completed'];
+        }else{
+            $_SESSION['error']++;
+        }
+
+        if(!empty($_POST['link'])){
+            $_SESSION['port_link']=$_POST['link'];
+        }else{
+            $_SESSION['error']++;
+        }
+
+        if(!empty($_POST['editor1'])){
+            $_SESSION['description']=$_POST['editor1'];
+        }else{
+            $_SESSION['error']++;
+        }
+
+    }
+
+
+    function modCheckSessVar(){
+
+        $_SESSION['error']=0;
+
+        $_SESSION['project_title']=$this->project_title;
+        $_SESSION['select_cat']=$this->category;
+        $_SESSION['main_img']=$this->main_img;
+        $_SESSION['main_old_img']=$this->main_old_img;
+        $_SESSION['client']=$this->client;
+        $_SESSION['completed']=$this->completed;
+        $_SESSION['link']=$this->link;
+        $_SESSION['description']=$this->description;
+
+    }
+
+    function destroyCheckSessVar(){
+
+        $_SESSION['error']=0;
+
+        unset($_SESSION['project_title']);
+        unset($_SESSION['select_cat']);
+        unset($_SESSION['main_img']);
+        unset($_SESSION['main_old_img']);
+        unset($_SESSION['client']);
+        unset($_SESSION['completed']);
+        unset($_SESSION['link']);
+        unset($_SESSION['description']);
+
+    }
+    
+
 
     // create new role record
     function insert(){
@@ -98,24 +188,28 @@ class Portfolio{
         
             // execute the query, also check if query was successful
             if($stmt->execute()){
-                $query1="SELECT * FROM ".$this->table_name." WHERE project_title = :project_title LIMIT 0,1";
-                $stmt1 = $this->conn->prepare($query1);
-                $stmt1->bindParam(':project_title', $this->project_title);       
-                $stmt1->execute();
-                $row1 = $stmt1->fetch(PDO::FETCH_ASSOC);
-                $actualImage=$row1['main_img'];
-                if(($this->main_img)==$actualImage){
-                    return true;
+
+                // $query1="SELECT * FROM ".$this->table_name." WHERE project_title = :project_title LIMIT 0,1";
+                // $stmt1 = $this->conn->prepare($query1);
+                // $stmt1->bindParam(':project_title', $this->project_title);       
+                // $stmt1->execute();
+                // $row1 = $stmt1->fetch(PDO::FETCH_ASSOC);
+                // $actualImage=$row1['main_img'];
+                // if(($this->main_img)==$actualImage){
+                //     return true;
                     
-                }else{
+                // }else{
 
                     // HEADER?
 
-                    if($this->uploadPhoto()){
-                        return true;
-                    }else{
-                        return false;
-                    }
+                    if($stmt->execute()){
+                        if($this->new_img==1){
+                            if($this->uploadPhoto()){
+                                return true;
+                            }else{
+                                return false;
+                            }
+                        }
                 }
                 return true;
 
@@ -205,6 +299,140 @@ class Portfolio{
                 }   
         	}
    
+            function addCategories($cat){
+
+
+                // prendo i permessi esistenti
+                $query1= "SELECT
+                        *
+                    FROM
+                        ".$this->table_name."
+                        WHERE project_title = :project_title";
+        
+                $stmt1 = $this->conn->prepare($query1);
+                $stmt1->bindParam('project_title', $this->project_title);
+        
+                $stmt1->execute();
+        
+                $row1 = $stmt1->fetch(PDO::FETCH_ASSOC);
+        
+                // converto in array
+                if($row1['category']){
+                    $categories=$row1['category'];
+                    $catArr=explode(",",$categories);
+                }else{
+                    $catArr=array();
+                }
+                
+                // aggiungo il file caricato come elemento dell'array e poi lo riconverto in stringa
+                $catArr[]=$cat;
+                $stringCat=implode(",",$catArr);
+        
+                $this->category=$stringCat;
+        
+                // azzero il campo "files"
+                $query2= "UPDATE
+                    ".$this->table_name."
+                    SET
+                    category = NULL
+                    WHERE project_title = :project_title";
+        
+                $stmt2 = $this->conn->prepare($query2);
+                $stmt2->bindParam('title', $this->title);
+        
+                
+                $stmt2->execute();
+        
+                // inserisco la nuova stringa dei permessi nel db
+        
+                $query= "UPDATE
+                ".$this->table_name."
+                SET
+                category = :category
+                WHERE project_title = :project_title";
+        
+                $stmt = $this->conn->prepare($query);
+                $stmt->bindParam('category', $this->category);
+                $stmt->bindParam('project_title', $this->project_title);
+        
+                if($stmt->execute()){
+                    return true;
+        
+                }else{
+                    $this->showError($stmt);
+                    return false;
+                }
+            }
+        
+            function editCategories($cat){
+        
+                if($this->counter>0){
+                // prendo i permessi esistenti
+                $query1= "SELECT
+                        *
+                    FROM
+                        ".$this->table_name."
+                        WHERE project_title = :project_title";
+        
+                $stmt1 = $this->conn->prepare($query1);
+                $stmt1->bindParam('project_title', $this->project_title);
+        
+                $stmt1->execute();
+        
+                $row1 = $stmt1->fetch(PDO::FETCH_ASSOC);
+        
+                }
+                // converto in array
+                if($row1['category']){
+                    $categories=$row1['category'];
+                    $catArr=explode(",",$categories);
+                }else{
+                    $catArr=array();
+                }
+                
+                // aggiungo il file caricato come elemento dell'array e poi lo riconverto in stringa
+                $catArr[]=$cat;
+                $stringCat=implode(",",$catArr);
+        
+                $this->category=$stringCat;
+                
+                // azzero il campo "files"
+                $query2= "UPDATE
+                    ".$this->table_name."
+                    SET
+                    category = NULL
+                    WHERE project_title = :project_title";
+        
+                $stmt2 = $this->conn->prepare($query2);
+                $stmt2->bindParam('title', $this->title);
+        
+                
+                $stmt2->execute();
+        
+                // inserisco la nuova stringa dei permessi nel db
+        
+                $query= "UPDATE
+                ".$this->table_name."
+                SET
+                category = :category
+                WHERE project_title = :project_title";
+        
+                $stmt = $this->conn->prepare($query);
+                $stmt->bindParam('category', $this->category);
+                $stmt->bindParam('project_title', $this->project_title);
+        
+                if($stmt->execute()){
+                    return true;
+        
+                }else{
+                    $this->showError($stmt);
+                    return false;
+                }
+            }
+                
+
+
+
 
     function showAll($from_record_num, $records_per_page){
         //select all data

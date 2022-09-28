@@ -58,31 +58,40 @@ if(filter_input(INPUT_GET,"idToDel")){
 if(filter_input(INPUT_POST,"subReg")){
 	$operation=filter_input(INPUT_POST,"operation");
 
-	$editor = preg_replace('/\s+/', '', $_POST['editor']);
-
-
+	$post->initCheckSessVar();
 	
-	
-	
-	if(!$_POST['project_title']||!$_POST['client']||!$_POST['completed']||!$_POST['link']||!$_POST['category']||empty($editor)){
-		header("Location: ../index.php?man=portfolio&op=show&msg=projectEmpty");
+	if($_SESSION['error']!=0){
+		header("Location: ../index.php?man=portfoli&op=add&msg=pageDataMissing&more=yes");
 		exit;
 	}
 
+	$editor = preg_replace('/\s+/', '', $_POST['editor1']);
+
+	////////////////////////////////////////////////////////////////
+	
+	// FINO A QUI
+	
+	////////////////////////////////////////////////////////////////
+	
+	
 	if($operation=="add"){
 		//inserimento
-		if ($_FILES['myfile']['size'] == 0 ){
-			header("Location: ../index.php?man=portfolio&op=show&msg=projectImgEmpty");
-			exit;
-		}
-
 		$portfolio->project_title=$_POST['project_title'];
 		$portfolio->main_img=$_FILES['myfile']['name'];
 		$portfolio->description=$_POST['editor'];
 		$portfolio->client=$_POST['client'];
 		$portfolio->completed=$_POST['completed'];
-		$portfolio->category=$_POST['category'];
 		$portfolio->link=$_POST['link'];
+		
+		$cat_names=$_POST['select_cat'];
+		
+		$cat=array();
+		foreach($cat_names as $names){
+			$categories_portfolio->category_name=$names;
+			$categories_portfolio->showByName();
+			$cat[]=$categories_portfolio->id;
+		}
+
 
 		$dir="../../misc/portfolio/";
 		if(!is_dir($dir)){
@@ -99,6 +108,8 @@ if(filter_input(INPUT_POST,"subReg")){
 
 		// create the page
 		if($portfolio->insert()){
+			$category_id=$row['id'];
+			$portfolio->addCategories($category_id);
 
 			$str=$portfolio->project_title;
 			$str = preg_replace('/\s+/', '_', $str);
@@ -125,6 +136,7 @@ if(filter_input(INPUT_POST,"subReg")){
 		
 		if($_FILES['myfile']['name']){
 			$portfolio->main_img=$_FILES['myfile']['name'];
+			$portfolio->new_img=1;
 		}else {
 			$query1="SELECT * FROM portfolio WHERE project_title = :project_title LIMIT 0,1";
 			$stmt1 = $db->prepare($query1);
@@ -132,18 +144,33 @@ if(filter_input(INPUT_POST,"subReg")){
 			$stmt1->execute();
 			$row1 = $stmt1->fetch(PDO::FETCH_ASSOC);
 			$portfolio->main_img=$row1['main_img'];
+			$portfolio->new_img=0;
 		}
 
 		$portfolio->description=$_POST['editor'];
 		$portfolio->client=$_POST['client'];
 		$portfolio->completed=$_POST['completed'];
-		$portfolio->category=$_POST['category'];
 		$portfolio->link=$_POST['link'];
 
+		$cat_names=$_POST['select_cat'];
+		
+		$cat=array();
+		foreach($cat_names as $names){
+			$categories_portfolio->category_name=$names;
+			$categories_portfolio->showByName();
+			$cat[]=$categories_portfolio->id;
+		}
 
 
 		// update the page
 		if($portfolio->update()){
+
+			for ($i = 0, $n = count($cat) ; $i < $n ; $i++){			
+				$category_id=$cat[$i];
+				$portfolio->counter=$i;
+				$portfolio->editCategories($category_id);
+			}
+
 			header("Location: ../index.php?man=portfolio&op=show&msg=projectEditSucc");
 			exit;
 		

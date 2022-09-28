@@ -12,7 +12,7 @@ if(filter_input(INPUT_GET,"idToMod")){
     $titoloForm= $regport_title_edit;
     $operation="mod";
 }
-$settings = new Settings ($db);
+
 $stmt = $settings->showSettings();
 
 ?>
@@ -72,34 +72,43 @@ $stmt = $settings->showSettings();
             
             <br>
             <div class="control-group">
-            <label for="category"><?=$regport_category?></label>
-            <?php
-            $cat = new Categories_Portfolio($db);
-                $stmt = $cat->showAllList();
-                $total_rows = $cat->countAll();
-              
-                ?>
-            <select name="category">
-                <?php
-               
-               
-                
-               
-                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-           
-                    extract($row);
-                  
-                    $selected = "";
-                    if ($id == $portfolio->category) {
-                        $selected = "selected";
-                    }
-                    echo "<option value='{$id}' $selected>{$category_name}</option>";
+                    <label class="control-label" for="myMultiselect" ><?=$regport_category?></label>
+                    <div class="controls">
+                        <div id="myMultiselect" class="multiselect">
+                            <div id="mySelectLabel" class="selectBox" onclick="toggleCheckboxArea()">
+                                <select class="form-select">
+                                <option><?=$regpost_no_cat?></option>
+                                </select>
+                                <div class="overSelect"></div>
+                            </div>
+                            <div id="mySelectOptions">
+                                <?php
+                                
+                                $stmt = $categories_portfolio->showAllList();
+                                        
+                                $total_rows = $categories_portfolio->countAll();
+                                
+                                // ciclare gli id delle categorie
 
-                }
+                                foreach($stmt as $row){
 
-                ?>
-            </select>
-            </div>
+                                    $checked="";
+                                    
+                                    if(in_array($row['id'], $catArr)){
+                                        $checked="checked";
+                                    }else{
+                                        $checked="";
+                                    }
+                                    ?>
+                                    <label for="<?=$row['id']?>"><input type="checkbox"  name="select_cat[]" id="<?=$row['id']?>" onchange="checkboxStatusChange()" value="<?=$row['category_name']?>" <?=$checked?> /> <?=$row['category_name']?></label>
+                                    <?php
+                                }
+                                ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             <br>
             <div class="control-group">
                 <label class="control-label" for="myfile"><?=$regport_img?></label>

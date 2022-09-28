@@ -41,6 +41,7 @@
                     <th scope="col"><?=$post_posttitle?></th>
                     <th scope="col"><?=$post_link?></th>
                     <th scope="col"><?=$post_cat?></th>
+                    <th scope="col"><?=$post_author?></th>
                     <th scope="col"><?=$post_mod?></th>
                     <th scope="col"><?=$txt_edit?></th>
                     <th scope="col"><?=$txt_delete?></th>
@@ -76,9 +77,10 @@
                         }
                     ?>    
                 </td>
+                <td><?=$author?></td>
                 <td><?=$modified?></td>
                 <td>
-                <a href="index.php?man=blog&op=edit&idToMod=<?=$row["id"]?>" class="btn btn-warning btn-icon-split">
+                <a href="index.php?man=blog&op=edit&idToMod=<?=$row["id"]?>&count=2" class="btn btn-warning btn-icon-split">
                     <span class="icon text-white-50">
                         <i class="fas fa-pen"></i>
                     </span>

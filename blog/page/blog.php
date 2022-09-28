@@ -44,7 +44,7 @@ require "admin/template/inc/header.php";
 						
 
         <h1><?=$row['title']?></h1>
-        <p class="metainfo">*** <?=$blog_category?>: 
+        <p class="metainfo">*** <?=$post_author?>: <b><?=$row['author']?></b> *** <?=$blog_category?>: 
         <?php
             foreach($catArr as $arr){
                 if($arr['id']){

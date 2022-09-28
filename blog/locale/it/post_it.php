@@ -11,6 +11,7 @@ $post_link ="Link del post";
 $post_view = "Mostra";
 $post_cat = "Categoria";
 $post_mod = "Modificato";
+$post_author = "Autore";
 $post_modal_text = "Se vuoi veramente cancellare questo post clicca \"Ok\".";
 $post_nopost = "Nessun post trovato";
 

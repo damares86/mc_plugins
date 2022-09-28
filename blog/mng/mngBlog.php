@@ -54,7 +54,7 @@ if(filter_input(INPUT_POST,"subReg")){
 	$post->initCheckSessVar();
 	
 	if($_SESSION['error']!=0){
-		header("Location: ../index.php?man=blog&op=add&msg=pageDataMissing&more=yes");
+		header("Location: ../index.php?man=blog&op=add&msg=pageDataMissing&more=yes&count=2");
 		exit;
 	}
 
@@ -62,10 +62,7 @@ if(filter_input(INPUT_POST,"subReg")){
 	$editor2 = preg_replace('/\s+/', '', $_POST['editor2']);
 
 	if($operation=="add"){
-		// if (!isset($_FILES['myfile'])){
-		// 	header("Location: ../index.php?man=blog&op=show&msg=imgEmpty");
-		// 	exit;
-		// }
+		
 		$new_title=$_POST['title'];
 		
 		$stmt=$post->showAllList();
@@ -93,7 +90,7 @@ if(filter_input(INPUT_POST,"subReg")){
 		$post->main_img=$_FILES['myfile']['name'];
 		$post->summary=$_POST['editor'];
 		$post->content=$_POST['editor2'];
-		// $post->category_id=$_POST['category_id'];
+		$post->author=$_POST['author'];
 
 		$cat_names=$_POST['select_cat'];
 		
@@ -152,17 +149,17 @@ if(filter_input(INPUT_POST,"subReg")){
 		$post->id=$_POST['idToMod'];
 				
 		$cat_names=$_POST['select_cat'];
-		$categories=array();
+		$cat=array();
 		foreach($cat_names as $names){
-			$cat->category_name=$names;
-			$cat->showByName();
-			$categories[]=$cat->id;
+			$categories->category_name=$names;
+			$categories->showByName();
+			$cat[]=$categories->id;
 		}
 		
 		// update the post
 		if($post->update()){
-			for ($i = 0, $n = count($categories) ; $i < $n ; $i++){			
-				$category_id=$categories[$i];
+			for ($i = 0, $n = count($cat) ; $i < $n ; $i++){			
+				$category_id=$cat[$i];
 				$post->counter=$i;
 				$post->editCategories($category_id);
 
