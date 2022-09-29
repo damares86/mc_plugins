@@ -25,7 +25,7 @@ if (!isset($_SESSION['loggedin'])) {
 	$db = $database->getConnection();
 
 	$portfolio = new Portfolio($db);
-	$cat_portfolio = new Categories_Portfolio($db);
+	$categories_portfolio = new Categories_Portfolio($db);
 
 if(filter_input(INPUT_GET,"idToDel")){
 	
@@ -58,21 +58,14 @@ if(filter_input(INPUT_GET,"idToDel")){
 if(filter_input(INPUT_POST,"subReg")){
 	$operation=filter_input(INPUT_POST,"operation");
 
-	$post->initCheckSessVar();
+	$portfolio->initCheckSessVar();
 	
 	if($_SESSION['error']!=0){
-		header("Location: ../index.php?man=portfoli&op=add&msg=pageDataMissing&more=yes");
+		header("Location: ../index.php?man=portfolio&op=add&msg=pageDataMissing&more=yes");
 		exit;
 	}
 
-	$editor = preg_replace('/\s+/', '', $_POST['editor1']);
-
-	////////////////////////////////////////////////////////////////
-	
-	// FINO A QUI
-	
-	////////////////////////////////////////////////////////////////
-	
+	$editor = preg_replace('/\s+/', '', $_POST['editor']);
 	
 	if($operation=="add"){
 		//inserimento
@@ -84,6 +77,7 @@ if(filter_input(INPUT_POST,"subReg")){
 		$portfolio->link=$_POST['link'];
 		
 		$cat_names=$_POST['select_cat'];
+
 		
 		$cat=array();
 		foreach($cat_names as $names){
@@ -91,25 +85,28 @@ if(filter_input(INPUT_POST,"subReg")){
 			$categories_portfolio->showByName();
 			$cat[]=$categories_portfolio->id;
 		}
-
-
+		
+		
 		$dir="../../misc/portfolio/";
 		if(!is_dir($dir)){
 			mkdir($dir);
 			chmod($dir,0777);
 		}
-
+		
 		$dirImg="../../misc/portfolio/img/";
 		if(!is_dir($dirImg)){
 			mkdir($dirImg);
 			chmod($dirImg,0777);
 		}
-
-
+		
+		
 		// create the page
 		if($portfolio->insert()){
-			$category_id=$row['id'];
-			$portfolio->addCategories($category_id);
+			foreach($cat as $row){
+				$category_id=$row['id'];
+				$portfolio->addCategories($category_id);
+			}
+			
 
 			$str=$portfolio->project_title;
 			$str = preg_replace('/\s+/', '_', $str);

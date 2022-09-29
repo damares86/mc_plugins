@@ -44,10 +44,10 @@ class Portfolio{
             $this->main_img=$_FILES['myfile']['name'];
             $this->img_tmp=$_FILES['myfile']['tmp_name'];
             $this->uploadPhoto();
-            $_SESSION['main_img']=$_FILES['myfile']['name'];
-            $_SESSION['main_old_img']=$_SESSION['main_img'];
-        }else if($_SESSION['main_old_img']){
-            $_SESSION['main_img']=$_SESSION['main_old_img'];
+            $_SESSION['port_main_img']=$_FILES['myfile']['name'];
+            $_SESSION['port_main_old_img']=$_SESSION['port_main_img'];
+        }else if($_SESSION['port_main_old_img']){
+            $_SESSION['port_main_img']=$_SESSION['port_main_old_img'];
         }else{
             $_SESSION['error']++;
         }
@@ -70,8 +70,8 @@ class Portfolio{
             $_SESSION['error']++;
         }
 
-        if(!empty($_POST['editor1'])){
-            $_SESSION['description']=$_POST['editor1'];
+        if(!empty($_POST['editor'])){
+            $_SESSION['description']=$_POST['editor'];
         }else{
             $_SESSION['error']++;
         }
@@ -84,12 +84,12 @@ class Portfolio{
         $_SESSION['error']=0;
 
         $_SESSION['project_title']=$this->project_title;
-        $_SESSION['select_cat']=$this->category;
-        $_SESSION['main_img']=$this->main_img;
-        $_SESSION['main_old_img']=$this->main_old_img;
-        $_SESSION['client']=$this->client;
-        $_SESSION['completed']=$this->completed;
-        $_SESSION['link']=$this->link;
+        $_SESSION['port_cat']=$this->category;
+        $_SESSION['port_main_img']=$this->main_img;
+        $_SESSION['port_main_old_img']=$this->main_old_img;
+        $_SESSION['port_client']=$this->client;
+        $_SESSION['port_completed']=$this->completed;
+        $_SESSION['port_link']=$this->link;
         $_SESSION['description']=$this->description;
 
     }
@@ -99,12 +99,12 @@ class Portfolio{
         $_SESSION['error']=0;
 
         unset($_SESSION['project_title']);
-        unset($_SESSION['select_cat']);
-        unset($_SESSION['main_img']);
-        unset($_SESSION['main_old_img']);
-        unset($_SESSION['client']);
-        unset($_SESSION['completed']);
-        unset($_SESSION['link']);
+        unset($_SESSION['port_cat']);
+        unset($_SESSION['port_main_img']);
+        unset($_SESSION['port_main_old_img']);
+        unset($_SESSION['port_client']);
+        unset($_SESSION['port_completed']);
+        unset($_SESSION['port_link']);
         unset($_SESSION['description']);
 
     }
@@ -338,7 +338,7 @@ class Portfolio{
                     WHERE project_title = :project_title";
         
                 $stmt2 = $this->conn->prepare($query2);
-                $stmt2->bindParam('title', $this->title);
+                $stmt2->bindParam('project_title', $this->title);
         
                 
                 $stmt2->execute();
@@ -451,6 +451,18 @@ class Portfolio{
         return $stmt;
     }
 
+    function showCat(){
+        //select all data
+        $query = "SELECT
+                    *
+                FROM
+                    " . $this->table_name ."";  
+  
+        $stmt = $this->conn->prepare( $query );
+        $stmt->execute();
+  
+        return $stmt;
+    }
 
 
     public function countAll(){
@@ -494,6 +506,7 @@ class Portfolio{
         $this->id = $row['id'];
         $this->project_title = $row['project_title'];
         $this->main_img = $row['main_img'];
+        $this->main_old_img = $row['main_img'];
         $this->description = $row['description'];
         $this->client = $row['client'];
         $this->completed = $row['completed'];
@@ -503,6 +516,8 @@ class Portfolio{
 
 
     function showByCat($from_record_num, $records_per_page){
+
+        
         $query = "SELECT *
         FROM " . $this->table_name . "
         WHERE category = :category
@@ -517,6 +532,103 @@ class Portfolio{
         return $stmt;
     
 
+    }
+
+
+    function showByCatId($cat_id,$from_record_num, $records_per_page){
+
+        // drop if exist
+        $query2="DROP TEMPORARY TABLE temp_portfolio";
+
+        $stmt2 = $this->conn->prepare( $query2 );
+        $stmt2->execute();
+
+
+        $query = "SELECT *
+        FROM " . $this->table_name . "";
+
+        $stmt = $this->conn->prepare( $query );
+        $stmt->execute();
+        
+        // create temporary table
+
+        $query2="CREATE TEMPORARY TABLE temp_portfolio(
+                id INT ( 5 ) NOT NULL PRIMARY KEY,
+                project_title VARCHAR(255) NOT NULL,
+                main_img VARCHAR(255) NOT NULL,
+                description text COLLATE utf8_unicode_ci NOT NULL,
+                client VARCHAR(255) NOT NULL,
+                completed date NOT NULL,
+                category VARCHAR(255) NULL,
+                link VARCHAR(255) NOT NULL)";
+
+        $stmt2 = $this->conn->prepare( $query2 );
+        $stmt2->execute();
+
+        // insert record in temporary table
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+
+            extract($row);
+
+            $catArr=explode(",",$row['category']);
+            
+            if(in_array($cat_id,$catArr)){
+                // $this->id=$row['id'];
+               
+                $query3="INSERT INTO
+                temp_portfolio
+
+                 SET
+                     id = :id,
+                     project_title = :project_title,
+                     main_img = :main_img,          
+                     description = :description,
+                     client = :client,
+                     completed = :completed,
+                     category = :category,
+                     link = :link";
+                
+                // prepare the query
+                $stmt3 = $this->conn->prepare($query3); 
+                $stmt3->bindParam('id', $row['id']);
+                $stmt3->bindParam(':project_title', $row['project_title']);       
+                $stmt3->bindParam(':main_img', $row['main_img']);   
+                $stmt3->bindParam(':description', $row['description']);       
+                $stmt3->bindParam(':client', $row['client']);       
+                $stmt3->bindParam(':completed', $row['completed']);       
+                $stmt3->bindParam(':category', $row['category']);       
+                $stmt3->bindParam(':link', $row['link']);    
+
+                $stmt3->execute();   
+
+            }
+        }
+        
+            $query1 = "SELECT *
+            FROM temp_portfolio ORDER BY completed DESC
+                    LIMIT
+                    {$from_record_num}, {$records_per_page}";
+
+            $stmt1 = $this->conn->prepare( $query1 );
+          
+            $stmt1->execute();
+
+          return $stmt1;
+        
+    }
+
+    public function countSelected(){
+
+        $query1 = "SELECT *
+        FROM temp_portfolio";
+
+        $stmt1 = $this->conn->prepare( $query1 );
+      
+        $stmt1->execute();
+
+        $num = $stmt1->rowCount();
+  
+        return $num;
     }
 
     function showByTitle(){

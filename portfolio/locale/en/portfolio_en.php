@@ -12,6 +12,10 @@ $port_view = "View";
 $port_link = "Link";
 $port_modal_text = "If you really want to delete this project click \"Ok\" below";
 $port_cat_title = "Portfolio categories";
+$port_cat_add = "Add new category";
+$port_cat_name = "Category";
+$port_regcat_name = "Category name";
+$port_regcat_name_ph = "Your category name";
 $port_noproject = "No project found";
 
 
@@ -19,6 +23,7 @@ $port_noproject = "No project found";
 
 $regport_title_add = "Add new project";
 $regport_title_edit = "Edit project";
+$regport_title = "Project title";
 $regport_name_placeholder = "Your project's title";
 $regport_category = "Project category";
 $regport_img = "Main project image";

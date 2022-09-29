@@ -62,14 +62,25 @@
         $str = preg_replace('/\s+/', '_', $str);			
         $str = strtolower($str);
 
-        $cat->id=$category;
-        $cat->showById();
+        // $categories_portfolio->id=$category;
+        // $categories_portfolio->showById();
 
         ?>
             <tr>
                 <td><?=$project_title?></td>
                 <td><?=$completed?></td>
-                <td><?=$cat->category_name?></td>
+                <td>
+                    - <?php
+                            $catArr=explode(",",$category);
+                            
+                            foreach($catArr as $row1){
+                                $categories_portfolio->id = $row1['id'];
+                                $categories_portfolio->showById();                                        
+                                $category_name= $categories_portfolio->category_name;
+                                echo "$category_name - ";
+                            }
+                        ?>                
+                </td>
                 <td><a href="../misc/portfolio/<?=$str?>.php"><?=$port_link?></a></td>
                
                 <td>

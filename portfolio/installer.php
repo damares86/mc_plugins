@@ -99,6 +99,12 @@ if($op=="del"){
             }
         }
 
+        if(is_file("../../template/inc/header_portfolio.php")){
+            if(!unlink("../../template/inc/header_portfolio.php")){
+                $error++;
+            }
+        }
+
        // DELETE REG CAT
         if(is_file("../../inc/func/regCatPortfolio.php")){
             if(!unlink("../../inc/func/regCatPortfolio.php")){
@@ -261,6 +267,13 @@ if($op=="del"){
             // TEMPLATE
             if(copy('template/project.php', '../../template/project.php')){
                 chmod('../../template/project.php',0777);
+            }else{
+                $error++;
+            }
+
+            // HEADER
+            if(copy('template/header_portfolio.php', '../../template/inc/header_portfolio.php')){
+                chmod('../../template/inc/header_portfolio.php',0777);
             }else{
                 $error++;
             }
