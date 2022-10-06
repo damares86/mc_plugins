@@ -158,9 +158,14 @@ if(($file=="login.php")||($file=="contact.php")){
                     if($page->header==1){
                     ?>
                 <div id="banner-wrapper">
-					<div id="banner" class="box container" style="background-image: url(<?=$root?>uploads/img/<?=$img?>);">
+                <div id="banner-wrapper">
+                <?php    
+                if(pathinfo($page->img, PATHINFO_EXTENSION)){
+                ?>
+                    <div id="banner" class="box container" style="background-image: url(<?=$root?>uploads/img/<?=$img?>);">
 						<div class="row">
-                        <?php
+                            <div class="col-7 col-12-medium">
+                            <?php
                             if($page->use_name==1){
                             ?>
 								<h2><?=$site_name?></h2>
@@ -174,8 +179,78 @@ if(($file=="login.php")||($file=="contact.php")){
                             <?php
                             }
                             ?>
+							</div>
 						</div>
 					</div>
+                <?php
+                }else{
+                        $gallery_name_visual=$page->img;
+                        $folder_visual= str_replace(" ","_", $gallery_name_visual);
+                        $folder_visual=strtolower($folder_visual);
+                ?>
+                        <script>
+                            $('#myVisualCarousel').carousel({
+                                interval: 2000,
+                                cycle: true
+                            })
+                        </script>
+
+                            <div id="#myVisualCarousel" class="carousel slide" data-ride="carousel">
+                                <ol class="carousel-indicators">
+                                <?php
+
+                                $dirCarousel="misc/gallery/img/$folder_visual/";
+
+                                $idx=0;
+                                foreach (glob($dirCarousel."*") as $file) {
+                                    
+                                    $active="";
+                                    if($idx==0){
+                                    $active="class=\"active\"";
+                                    }
+                                
+                                ?>
+                                <li data-target="#myVisualCarousel" data-slide-to="<?=$idx?>" <?=$class?>></li>
+                                <?php
+
+                                    $idx++;
+                                }
+                                ?>
+                                </ol>
+                                <div class="carousel-inner">
+
+                                <?php
+                                $idx=0;
+                                foreach (glob($dirCarousel."*") as $file) {
+                                    $img=pathinfo($file, PATHINFO_FILENAME);
+                                    $ext=pathinfo($file, PATHINFO_EXTENSION);
+                                    $imgName=$img.".".$ext;
+
+                                    $active="";
+                                    if($idx==0){
+                                    $active="active";
+                                    }
+
+                                    $numberArr=array('first','second','third','fourth','fifth','sixth','seventh','eighth','ninth','tenth');
+
+                                    $number=$numberArr[$idx];
+
+                                    ?>
+                                <div class="carousel-item <?=$active?>">
+                                    <img class="<?=$number?>-slide" src="<?=$dirCarousel?>/<?=$imgName?>" alt="<?=$number?> slide">
+                                </div>
+                                <?php
+                                $idx++;
+                                }
+                                ?>
+                                
+                                </div>
+                                
+                            </div>
+                <?php
+                $idx=0;
+                }
+                ?>
 				</div>
                     <?php
                     }
