@@ -46,55 +46,51 @@ if($op=="del"){
         
         $error=0;
 
-        if(is_file("../../inc/func/allQuotes.php")){
-            if(!unlink("../../inc/func/allQuotes.php")){
+        if(is_file("../../inc/func/allPopup.php")){
+            if(!unlink("../../inc/func/allPopup.php")){
+                $error++;
+            }
+        }
+        
+        if(is_file("../../class/Popup.php")){
+            if(!unlink("../../class/Popup.php")){
                 $error++;
             }
         }
 
-        if(is_file("../../core/mngQuote.php")){
-            if(!unlink("../../core/mngQuote.php")){
+        if(is_file("../../core/mngPopup.php")){
+            if(!unlink("../../core/mngPopup.php")){
                 $error++;
             }
         }
 
-        if(is_file("../../template/inc/css/quotes.css")){
-            if(!unlink("../../template/inc/css/quotes.css")){
+        if(is_file("../../inc/func/regPopup.php")){
+            if(!unlink("../../inc/func/regPopup.php")){
                 $error++;
             }
         }
 
-        if(is_file("../../scripts/var/quotes.js")){
-            if(!unlink("../../scripts/var/quotes.js")){
+        if(is_file("../../locale/en/popup_en.php")){
+            if(!unlink("../../locale/en/popup_en.php")){
                 $error++;
             }
         }
 
-        if(is_file("../../locale/en/quotes_en.php")){
-            if(!unlink("../../locale/en/quotes_en.php")){
+        if(is_file("../../locale/it/popup_it.php")){
+            if(!unlink("../../locale/it/popup_it.php")){
                 $error++;
             }
         }
 
-        if(is_file("../../locale/it/quotes_it.php")){
-            if(!unlink("../../locale/it/quotes_it.php")){
+        if(is_file("../../inc/alert/popup_alert.php")){
+            if(!unlink("../../inc/alert/popup_alert.php")){
                 $error++;
             }
         }
 
-        if(is_file("../../inc/alert/quotes_alert.php")){
-            if(!unlink("../../inc/alert/quotes_alert.php")){
-                $error++;
-            }
-        }
+        $db->query("DROP TABLE `popup`");
 
-        if(is_file("../../inc/quotes.json")){
-            if(!unlink("../../inc/quotes.json")){
-                $error++;
-            }
-        }
-
-        $home->name_function="quotes";
+        $home->name_function="popup";
         $home->delete();
         
         unlink("../../inc/class_initialize.php");
@@ -114,56 +110,62 @@ if($op=="del"){
             $error=0;
 
             // ALL
-            if(copy('all/allQuotes.php', '../../inc/func/allQuotes.php')){
-                chmod('../../inc/func/allQuotes.php',0777);
+            if(copy('all/allPopup.php', '../../inc/func/allPopup.php')){
+                chmod('../../inc/func/allPopup.php',0777);
             }else{
                 $error++;
             }
 
+            // CLASS
+            if(copy('class/Popup.php', '../../class/Popup.php')){
+                chmod('../../class/Popup.php',0777);
+            }else{
+                $error++;
+            }
 
             // MNG
-            if(copy('mng/mngQuote.php', '../../core/mngQuote.php')){
-                chmod('../../core/mngQuotes.php',0777);
+            if(copy('mng/mngPopup.php', '../../core/mngPopup.php')){
+                chmod('../../core/mngPopup.php',0777);
             }else{
                 $error++;
             }
 
 
-            // TEMPLATE
-            if(copy('template/quotes.css', '../../template/inc/css/quotes.css')){
-                chmod('../../template/inc/css/quotes.css',0777);
+            // REG
+            if(copy('reg/regPopup.php', '../../inc/func/regPopup.php')){
+                chmod('../../inc/func/regPopup.php',0777);
             }else{
                 $error++;
             }
 
-            // SCRIPTS
-            if(copy('scripts/quotes.js', '../../scripts/var/quotes.js')){
-                chmod('../../scripts/var/quotes.js',0777);
-            }else{
-                $error++;
-            }
 
             // LOCALE EN
-            if(copy('locale/en/quotes_en.php', '../../locale/en/quotes_en.php')){
-                chmod('../../locale/en/quotes_en.php',0777);
+            if(copy('locale/en/popup_en.php', '../../locale/en/popup_en.php')){
+                chmod('../../locale/en/popup_en.php',0777);
                 }else{
                     $error++;
                 }
 
             // LOCALE IT
-            if(copy('locale/it/quotes_it.php', '../../locale/it/quotes_it.php')){
-                chmod('../../locale/it/quotes_it.php',0777);
+            if(copy('locale/it/popup_it.php', '../../locale/it/popup_it.php')){
+                chmod('../../locale/it/popup_it.php',0777);
                 }else{
                     $error++;
                 }
 
             
             // ALERT
-            if(copy('alert/quotes_alert.php', '../../inc/alert/quotes_alert.php')){
-                chmod('../../inc/alert/quotes_alert.php',0777);
+            if(copy('alert/popup_alert.php', '../../inc/alert/popup_alert.php')){
+                chmod('../../inc/alert/popup_alert.php',0777);
                 }else{
                     $error++;
                 }
+
+            $db->query("CREATE TABLE IF NOT EXISTS popup
+                ( id INT ( 5 ) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                title VARCHAR(255) NOT NULL,
+                content TEXT NOT NULL,
+                pagename VARCHAR(255) NOT NULL)");
 
             // LOCAL
 
