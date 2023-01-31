@@ -539,6 +539,7 @@ class Post{
                      title = :title,
                      summary = :summary,
                      content = :content,
+                     author =:author,
                      modified = :modified,
                      category_id = :category_id";
                 

@@ -137,6 +137,11 @@ if($op=="del"){
             }
 
             // SCRIPTS
+            if(!is_dir('../../scripts/var/')){
+                  $oldmask = umask(0);
+                    mkdir("../../scripts/var/",0777,true);
+                    umask($oldmask);
+            }
             if(copy('scripts/quotes.js', '../../scripts/var/quotes.js')){
                 chmod('../../scripts/var/quotes.js',0777);
             }else{
