@@ -14,6 +14,7 @@ class Post{
     public $summary;
     public $content;
     public $author;
+    public $gall;
     public $modified;
     public $category_id;
     public $categories;
