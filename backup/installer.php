@@ -1,12 +1,10 @@
 <?php
 
-require '../../phpDebug/src/Debug/Debug.php';   			// if not using composer
-
-$debug = new \bdk\Debug(array(
-    'collect' => true,
-    'output' => true,
-));
-
+// require '../vendor/autoload.php';		// If installed via composer
+// $debug = new \bdk\Debug(array(
+// 	'collect' => true,
+// 	'output' => true,
+// ));
 
 // loading class
 include("../../class/Database.php");
